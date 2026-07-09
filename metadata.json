@@ -1,0 +1,6 @@
+{
+  "name": "Scam Detector",
+  "description": "Scan phone numbers, websites, links, and profiles to identify and report scams. Features real-time AI Analysis and secure community alerts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
