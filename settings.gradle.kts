@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Scam Detector"
+rootProject.name = "Scan Shield Guard"
 
 include(":app")

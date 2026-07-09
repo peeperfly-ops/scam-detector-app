@@ -94,6 +94,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -281,6 +283,8 @@ fun HomeDashboardScreen(
 ) {
     val histories by viewModel.scanHistory.collectAsState()
     val isKeyReady = viewModel.isGeminiConfigured()
+    val guardLevel by viewModel.shieldGuardLevel.collectAsState()
+    var showGuardDialog by remember { mutableStateOf(false) }
     var searchInput by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf("PHONE") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -307,11 +311,141 @@ fun HomeDashboardScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+            // Configure Shield Guard Dialog
+            if (showGuardDialog) {
+                AlertDialog(
+                    onDismissRequest = { showGuardDialog = false },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Security,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Configure Shield Guard", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    text = {
+                        Column {
+                            Text(
+                                "Select the active protection mode for real-time sandbox analysis:",
+                                fontSize = 13.sp,
+                                modifier = Modifier.padding(bottom = 16.dp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            // Option 1: Maximum
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (guardLevel == "Maximum") MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                                        else Color.Transparent
+                                    )
+                                    .clickable { viewModel.setShieldGuardLevel("Maximum") }
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = "Maximum Protection",
+                                    tint = SafeGreen,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Maximum Protection", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("Full AI Cloud Analysis & heuristic sandbox scanning active.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                RadioButton(
+                                    selected = (guardLevel == "Maximum"),
+                                    onClick = { viewModel.setShieldGuardLevel("Maximum") }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Option 2: Standard
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (guardLevel == "Standard") MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                                        else Color.Transparent
+                                    )
+                                    .clickable { viewModel.setShieldGuardLevel("Standard") }
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Security,
+                                    contentDescription = "Standard Protection",
+                                    tint = WarningYellow,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Standard Protection", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("Local signatures check and basic link checking.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                RadioButton(
+                                    selected = (guardLevel == "Standard"),
+                                    onClick = { viewModel.setShieldGuardLevel("Standard") }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Option 3: Off
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        if (guardLevel == "Off") MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                                        else Color.Transparent
+                                    )
+                                    .clickable { viewModel.setShieldGuardLevel("Off") }
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Error,
+                                    contentDescription = "Suspended Protection",
+                                    tint = DangerRed,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Suspended (Off)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("Deactivate real-time background protection entirely.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                                RadioButton(
+                                    selected = (guardLevel == "Off"),
+                                    onClick = { viewModel.setShieldGuardLevel("Off") }
+                                )
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showGuardDialog = false }) {
+                            Text("Done", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                )
+            }
+
             // Hero Welcome Card with overall security posture
             GlassmorphicCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 8.dp)
+                    .clickable { showGuardDialog = true }
+                    .testTag("shield_guard_card"),
                 borderAlpha = 0.2f
             ) {
                 Row(
@@ -320,29 +454,53 @@ fun HomeDashboardScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Sandbox Protection",
+                            text = when (guardLevel) {
+                                "Maximum" -> "Sandbox Protection: MAXIMUM"
+                                "Standard" -> "Sandbox Protection: STANDARD"
+                                else -> "Sandbox Protection: INACTIVE"
+                            },
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = when (guardLevel) {
+                                "Maximum" -> SafeGreen
+                                "Standard" -> WarningYellow
+                                else -> DangerRed
+                            },
                             fontFamily = FontFamily.Monospace
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "ScamShield Guard Active",
+                            text = when (guardLevel) {
+                                "Maximum" -> "ScamShield Guard Active"
+                                "Standard" -> "Local Guard Shield Only"
+                                else -> "Guard Shield Suspended"
+                            },
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = if (isKeyReady) "AI Mode enabled via Gemini Cloud Analysis." else "Local analysis fallback active. Set your API key for cloud scans.",
+                            text = when (guardLevel) {
+                                "Maximum" -> if (isKeyReady) "AI Mode enabled via Gemini Cloud Analysis." else "Local analysis fallback active. Set your API key for cloud scans."
+                                "Standard" -> "Background signature checking. Local scanner active."
+                                else -> "Deactivated. Tap this card to reactivate background analysis."
+                            },
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Icon(
-                        imageVector = Icons.Default.Security,
+                        imageVector = when (guardLevel) {
+                            "Maximum" -> Icons.Default.Security
+                            "Standard" -> Icons.Default.Security
+                            else -> Icons.Default.Error
+                        },
                         contentDescription = "Shield Guard Indicator",
-                        tint = if (isKeyReady) SafeGreen else WarningYellow,
+                        tint = when (guardLevel) {
+                            "Maximum" -> if (isKeyReady) SafeGreen else WarningYellow
+                            "Standard" -> WarningYellow
+                            else -> DangerRed.copy(alpha = 0.6f)
+                        },
                         modifier = Modifier
                             .size(54.dp)
                             .padding(start = 12.dp)
@@ -1938,6 +2096,7 @@ fun ProfileAndSettingsScreen(viewModel: ScamViewModel, navController: NavControl
     val activeLanguage by viewModel.language.collectAsState()
     val alertsActive by viewModel.notificationsEnabled.collectAsState()
     val privacyActive by viewModel.privacyControlsEnabled.collectAsState()
+    val guardLevel by viewModel.shieldGuardLevel.collectAsState()
 
     var loginFieldEmail by remember { mutableStateOf("") }
 
@@ -2186,6 +2345,104 @@ fun ProfileAndSettingsScreen(viewModel: ScamViewModel, navController: NavControl
                         checked = privacyActive,
                         onCheckedChange = { viewModel.togglePrivacy() }
                     )
+                }
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), modifier = Modifier.padding(vertical = 4.dp))
+
+                // App Scan Shield Guard Configuration
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text("App Scan Shield Guard", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text("Real-time local and cloud threat sandbox", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        Text(
+                            text = guardLevel.uppercase(),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = when (guardLevel) {
+                                "Maximum" -> SafeGreen
+                                "Standard" -> WarningYellow
+                                else -> DangerRed
+                            },
+                            modifier = Modifier
+                                .background(
+                                    color = (when (guardLevel) {
+                                        "Maximum" -> SafeGreen
+                                        "Standard" -> WarningYellow
+                                        else -> DangerRed
+                                    }).copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(6.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        // Max button
+                        Button(
+                            onClick = { viewModel.setShieldGuardLevel("Maximum") },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (guardLevel == "Maximum") SafeGreen.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                contentColor = if (guardLevel == "Maximum") SafeGreen else MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.weight(1f).testTag("guard_max_btn"),
+                            border = BorderStroke(
+                                1.dp,
+                                if (guardLevel == "Maximum") SafeGreen else Color.Transparent
+                            )
+                        ) {
+                            Text("MAX", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        // Standard button
+                        Button(
+                            onClick = { viewModel.setShieldGuardLevel("Standard") },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (guardLevel == "Standard") WarningYellow.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                contentColor = if (guardLevel == "Standard") WarningYellow else MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.weight(1f).testTag("guard_std_btn"),
+                            border = BorderStroke(
+                                1.dp,
+                                if (guardLevel == "Standard") WarningYellow else Color.Transparent
+                            )
+                        ) {
+                            Text("STANDARD", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        // Off button
+                        Button(
+                            onClick = { viewModel.setShieldGuardLevel("Off") },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (guardLevel == "Off") DangerRed.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                contentColor = if (guardLevel == "Off") DangerRed else MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.weight(1f).testTag("guard_off_btn"),
+                            border = BorderStroke(
+                                1.dp,
+                                if (guardLevel == "Off") DangerRed else Color.Transparent
+                            )
+                        ) {
+                            Text("OFF", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
                 }
             }
 

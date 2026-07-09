@@ -83,6 +83,14 @@ class ScamViewModel(application: Application) : AndroidViewModel(application) {
     // Is the active scan saved by the user?
     val isCurrentScanSaved = MutableStateFlow(false)
 
+    // Dynamic App Scan Shield Guard State (Maximum, Standard, Off)
+    private val _shieldGuardLevel = MutableStateFlow("Maximum")
+    val shieldGuardLevel: StateFlow<String> = _shieldGuardLevel.asStateFlow()
+
+    fun setShieldGuardLevel(level: String) {
+        _shieldGuardLevel.value = level
+    }
+
     init {
         // Pre-populate data if DB is empty to ensure gorgeous initial visuals
         viewModelScope.launch {
