@@ -226,7 +226,7 @@ fun SplashScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "SCAM SHIELD AI",
+                text = "SCAN SHIELD GUARD",
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -471,7 +471,7 @@ fun HomeDashboardScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = when (guardLevel) {
-                                "Maximum" -> "ScamShield Guard Active"
+                                "Maximum" -> "Scan Shield Guard Active"
                                 "Standard" -> "Local Guard Shield Only"
                                 else -> "Guard Shield Suspended"
                             },
@@ -901,7 +901,7 @@ fun ScamAnalysisScreen(viewModel: ScamViewModel, navController: NavController) {
                     CircularProgressIndicator(modifier = Modifier.size(54.dp))
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "ScamShield AI Inspecting...",
+                        text = "Scan Shield Guard Inspecting...",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -1170,7 +1170,7 @@ fun ReportScamScreen(viewModel: ScamViewModel, navController: NavController) {
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = "Help other ScamShield users stay alert by submitting suspicious phone calls, phishing portals, or social handles to our community database.",
+                text = "Help other Scan Shield Guard users stay alert by submitting suspicious phone calls, phishing portals, or social handles to our community database.",
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -1820,7 +1820,7 @@ fun AiChatAssistantScreen(viewModel: ScamViewModel, navController: NavController
             androidx.compose.material3.TopAppBar(
                 title = {
                     Column {
-                        Text("ScamShield Advisor", fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                        Text("Scan Shield Advisor", fontWeight = FontWeight.Bold, fontSize = 17.sp)
                         Text("Interactive cybersecurity assistant", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
@@ -1896,7 +1896,7 @@ fun AiChatAssistantScreen(viewModel: ScamViewModel, navController: NavController
                     OutlinedTextField(
                         value = inputMessage,
                         onValueChange = { inputMessage = it },
-                        placeholder = { Text("Ask ScamShield anything suspicious...") },
+                        placeholder = { Text("Ask Scan Shield Guard anything suspicious...") },
                         modifier = Modifier
                             .weight(1f)
                             .testTag("ai_chat_input"),
@@ -1989,7 +1989,7 @@ fun ChatBubbleItem(message: ChatMessage) {
 fun NotificationsScreen(viewModel: ScamViewModel, navController: NavController) {
     val alerts = listOf(
         NotificationAlert("🚨 Bank Spoof SMS Alert", "A surge of fraudulent SMS messages mimicking Citizens Bank OTP prompts has been identified in your region. Do not tap short URLs.", "System Alert", "1 hr ago", true),
-        NotificationAlert("🛡️ App Update Complete", "ScamShield offline signature catalog updated with 2,400+ freshly reported phishing domains.", "Security Update", "4 hrs ago", false),
+        NotificationAlert("🛡️ App Update Complete", "Scan Shield Guard offline signature catalog updated with 2,400+ freshly reported phishing domains.", "Security Update", "4 hrs ago", false),
         NotificationAlert("⚠️ Fake Package Delivery SMS", "Incoming texts claiming package delivery delays are active globally. High risk of credential phishing.", "Trending Alert", "1 day ago", true),
         NotificationAlert("💡 Weekly Tip: OTP Safety", "No customer representative will ever ask for your one-time passwords. Keep your verification codes strictly confidential.", "Security Tip", "2 days ago", false)
     )
@@ -2448,7 +2448,7 @@ fun ProfileAndSettingsScreen(viewModel: ScamViewModel, navController: NavControl
 
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "ScamShield AI v1.0.2 - Sandboxed Security Layer",
+                text = "Scan Shield Guard v1.0.2 - Sandboxed Security Layer",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 fontSize = 10.sp,
@@ -2476,7 +2476,7 @@ fun TopSecurityBar(viewModel: ScamViewModel, navController: NavController) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "ScamShield AI",
+                    text = "Scan Shield Guard",
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp,
                     fontSize = 18.sp
